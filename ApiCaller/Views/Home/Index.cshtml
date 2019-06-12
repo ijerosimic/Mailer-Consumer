@@ -1,0 +1,121 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+@model MessageAttachment
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>MessageSender</title>
+</head>
+<body>
+    <form enctype="multipart/form-data" id="forma" method="post">
+        <div class="col-lg-12">
+            <div class="form-group row">
+                <div class="col-lg-1">
+                    <label>
+                        Mail to:
+                    </label>
+                </div>
+                <div class="col-lg-3">
+                    <input type="text" name="mailTo" id="mailTo" style="width: 100%;"></input>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-lg-1">
+                    <label>
+                        CC:
+                    </label>
+                </div>
+                <div class="col-lg-3">
+                    <input type="text" name="cc" id="cc" style="width: 100%;"></input>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-lg-1">
+                    <label>
+                        BCC:
+                    </label>
+                </div>
+                <div class="col-lg-3">
+                    <input type="text" name="bcc" id="bcc" style="width: 100%;"></input>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-lg-1">
+                    <label>
+                        Subject:
+                    </label>
+                </div>
+                <div class="col-lg-3">
+                    <input type="text" name="subject" id="subject" style="width: 100%;"></input>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-lg-1">
+                    <label>
+                        Body:
+                    </label>
+                </div>
+                <div class="col-lg-3">
+                    <input type="text" name="body" id="body" style="width: 100%;"></input>
+                </div>
+            </div>
+        </div>
+        <input name="file" id="fileElem" type="file" multiple />
+
+        <div class="form-group row">
+            <div class="col-lg-6">
+                <input type="submit" class="bg-success" id="RabbitMQTrigger" style="cursor:pointer; width: 50%; height: 5rem;"></input>
+            </div>
+        </div>
+    </form>
+</body>
+</html>
+@section scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            let files = [];
+
+            $('#fileElem').on('change', function handleFiles() {
+                files.push(this.files[0]);
+                console.log(files);
+            })
+
+            $('#forma').on('submit', function (e) {
+                e.preventDefault();
+
+                let formData = new FormData();
+                $.each(files, function (index, file) {
+                    formData.append('files', file);
+                })
+
+                const mess = {
+                    mailTo: $('#mailTo').val(),
+                    cc: $('#cc').val(),
+                    bcc: $('#bcc').val(),
+                    subject: $('#subject').val(),
+                    body: $('#body').val(),
+                    guid: 'EB1FC5B5-50E0-4315-89A2-3291299CCE85'
+                    // attachment: formData
+                };
+
+                formData.append('message', JSON.stringify(mess));
+
+                $.ajax({
+                    url: 'https://localhost:44362/api/Message',
+                    type: 'POST',
+                    data: formData,
+                    // cache: false,
+                    contentType: false,
+                    //contentType: 'multipart/form-data',
+                    processData: false,
+                    success: function (data) {
+                        console.log($('#mailTo').val());
+                        console.log("uspjeh");
+                    }
+                })
+            });
+        })
+    </script>
+}
