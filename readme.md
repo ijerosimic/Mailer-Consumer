@@ -1,1 +1,5 @@
-The app consists of 2 projects - .net core web api and a console app. The web api receives a mail objects and sends it to the console app through the rabbit mq channel. The idea was to learn about web api and rabbit mq in a single app. Console app also uses autofac
+The app consists of 3 projects.
+
+1) Caller/UI - Simple UI for uploading a file and some text to an API
+2) Receiver/Web API - Receives data from the caller and sends it to the console app through a RabbitMQ channel
+3) Consumer/Console app - consumes the message and sends an email with the data received
